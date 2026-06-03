@@ -1,0 +1,316 @@
+---
+title: "sql_project"
+format: html
+author: "Group Members: [Muizz] & [Martin]"
+---
+
+
+```{r setup}
+#| message: false
+#| warning: false
+#| include: false
+
+library(tidyverse)
+library(sqldf) #package to use SQL code to create a dataframe
+library(ggplot2)
+library(duckdb)# R package for building a duckdb database locally
+
+# install and load more packages if required
+# install.packages("package_name")
+# library(package_name)
+```
+
+### ---------------------------------------------------------------------------
+
+# Designing the database
+
+```{r}
+con_pokemon <- DBI::dbConnect(duckdb::duckdb(), dbdir = "pokemon_db")
+# create an empty database called pokemon_db
+# set up a connection to that db called con_pokemon
+```
+
+```{sql connection=con_pokemon}
+
+USE pokemon_db;
+
+```
+
+### ---------------------------------------------------------------------------
+
+# Accessing data
+
+## pokemon
+
+```{sql connection=con_pokemon}
+-- To make sure no other outdated tables exist in the database, we drop then create the tables
+DROP TABLE IF EXISTS pokemon;
+```
+
+```{sql connection=con_pokemon}
+CREATE TABLE pokemon (
+  name       VARCHAR(255) NOT NULL DEFAULT ' ',  -- competitive name; unique, so primary key
+  hp         SMALLINT NOT NULL DEFAULT 0,         -- base stats top out ~255, SMALLINT 
+  atk        SMALLINT NOT NULL DEFAULT 0,
+  def        SMALLINT NOT NULL DEFAULT 0,
+  spa        SMALLINT NOT NULL DEFAULT 0,
+  spd        SMALLINT NOT NULL DEFAULT 0,
+  spe        SMALLINT NOT NULL DEFAULT 0,
+  weight     DOUBLE NOT NULL DEFAULT 0,           -- kg, has decimals -> DOUBLE
+  height     DOUBLE NOT NULL DEFAULT 0,           -- m, has decimals -> DOUBLE
+  formats    VARCHAR(255),                        -- competitive tier (OU, UU, NFE, LC...)
+  generation VARCHAR(255),                        -- game generation code (RB, etc.)
+  PRIMARY KEY (name)
+);
+```
+
+```{sql connection=con_pokemon}
+COPY pokemon FROM 'pokemon_df.csv' (FORMAT CSV, HEADER, NULL 'NA');
+```
+
+## moves
+
+```{sql connection=con_pokemon}
+DROP TABLE IF EXISTS moves;
+```
+
+```{sql connection=con_pokemon}
+CREATE TABLE moves (
+  name        VARCHAR(255) NOT NULL DEFAULT ' ',  -- move name; unique, so primary key
+  category    VARCHAR(255),                        -- Physical / Special / Non-Damaging
+  power       SMALLINT NOT NULL DEFAULT 0,         -- base power; 0 for status moves
+  accuracy    SMALLINT NOT NULL DEFAULT 0,         -- 0-100
+  priority    SMALLINT NOT NULL DEFAULT 0,         -- can be negative, SMALLINT is signed
+  pp          SMALLINT NOT NULL DEFAULT 0,         -- power points
+  description VARCHAR(255),                         -- free-text effect
+  type        VARCHAR(255),                         -- elemental type
+  PRIMARY KEY (name)
+);
+```
+
+```{sql connection=con_pokemon}
+COPY moves FROM 'moves_df.csv' (FORMAT CSV, HEADER, NULL 'NA');
+```
+
+## pokemon_info
+
+```{sql connection=con_pokemon}
+DROP TABLE IF EXISTS pokemon_info;
+```
+
+```{sql connection=con_pokemon}
+CREATE TABLE pokemon_info (
+  id              INTEGER NOT NULL DEFAULT 0,        -- unique row id, so primary key
+  pokemon         VARCHAR(255) NOT NULL DEFAULT ' ', -- name; links to pokemon.name
+  species_id      INTEGER NOT NULL DEFAULT 0,
+  height          DOUBLE NOT NULL DEFAULT 0,
+  weight          DOUBLE NOT NULL DEFAULT 0,
+  base_experience SMALLINT NOT NULL DEFAULT 0,
+  type_1          VARCHAR(255),                      -- primary type
+  type_2          VARCHAR(255) DEFAULT NULL,         -- single-type pokemon have none -> NULL
+  hp              SMALLINT NOT NULL DEFAULT 0,
+  attack          SMALLINT NOT NULL DEFAULT 0,
+  defense         SMALLINT NOT NULL DEFAULT 0,
+  special_attack  SMALLINT NOT NULL DEFAULT 0,
+  special_defense SMALLINT NOT NULL DEFAULT 0,
+  speed           SMALLINT NOT NULL DEFAULT 0,
+  color_1         VARCHAR(255),                      -- hex colour
+  color_2         VARCHAR(255) DEFAULT NULL,         -- optional, so nullable
+  color_f         VARCHAR(255) DEFAULT NULL,
+  egg_group_1     VARCHAR(255),
+  egg_group_2     VARCHAR(255) DEFAULT NULL,         -- many have a single egg group -> NULL
+  url_icon        VARCHAR(255),
+  generation_id   SMALLINT DEFAULT NULL,             -- 1-8; regional forms are NULL
+  url_image       VARCHAR(255),
+  PRIMARY KEY (id)
+);
+```
+
+```{sql connection=con_pokemon}
+COPY pokemon_info FROM 'pokemon_info_df.csv' (FORMAT CSV, HEADER, NULL 'NA');
+```
+
+Check the tables in the database
+
+```{sql connection=con_pokemon}
+SHOW TABLES;
+```
+
+```{sql connection=con_pokemon}
+DESCRIBE pokemon;
+```
+
+
+Check if data aligns with the files
+
+```{sql connection=con_pokemon}
+SELECT * FROM moves LIMIT 10;
+```
+
+```{sql connection=con_pokemon}
+SELECT * FROM pokemon_info LIMIT 10;
+```
+
+### ---------------------------------------------------------------------------
+
+# Querying data using SQL
+
+The datasets contain information of each specific Pokemon up to generation 8. With each character, there is information on it's abilities, strengths, color, identification, etc,. With each query, we are accessing the database and our three csv files to get information that would take a longer time searching up online than writing a query to get a desired Pokemon or a list of Pokemon with specific features. If we are looking for a Pokemon with a specific typing and variables, we can do it with SQL.
+```{sql connection=con_pokemon}
+--how many pokemon in each generation in NFE(not fully evolved, doesnt include baby pokemon like charmander) or LC(little cup, refers to baby pokemon) tiers are in the Monster egg group (Muizz)
+
+SELECT generation_id AS gen, COUNT(*) AS num_pokemon
+FROM pokemon_info
+JOIN pokemon ON pokemon_info.pokemon = pokemon.name
+WHERE (pokemon.formats = 'NFE' OR pokemon.formats = 'LC') AND (egg_group_1 = 'monster' OR egg_group_2 = 'monster')
+GROUP BY gen;
+```
+
+```{sql connection=con_pokemon}
+--number of priority moves (positive priority) (Martin)
+SELECT COUNT(*) AS num_rows
+FROM moves
+WHERE priority <> 0;
+```
+
+```{sql connection=con_pokemon}
+-- base stat total of pokemon in OU tier from highest to lowest (Martin)
+
+SELECT pokemon, base_experience, formats, (pokemon_info.hp + pokemon_info.attack + pokemon_info.defense + pokemon_info.special_attack + pokemon_info.special_defense + pokemon_info.speed) AS total
+FROM pokemon_info
+JOIN pokemon ON pokemon.name = pokemon_info.pokemon
+WHERE formats = 'OU'
+ORDER BY total DESC
+LIMIT 10;
+
+```
+
+```{sql connection=con_pokemon}
+-- heaviest pokemon in the OU (overused) competitive format (Muizz)
+
+SELECT name, weight, formats
+FROM pokemon
+WHERE formats = 'OU'
+ORDER BY weight DESC
+LIMIT 1;
+```
+
+```{sql connection=con_pokemon}
+--which pokemon that are poison types are in UU (underused) format (Muizz)
+
+SELECT pokemon, type_1, type_2, pokemon.formats
+FROM pokemon_info
+JOIN pokemon ON pokemon_info.pokemon=pokemon.name
+WHERE (type_1 = 'poison' OR type_2 = 'poison') AND pokemon.formats = 'UU';
+
+```
+
+```{sql connection=con_pokemon}
+-- Top 10 lightest pokemon (Martin)
+SELECT pokemon, weight
+FROM pokemon_info
+ORDER BY weight
+LIMIT 10;
+
+```
+
+```{sql connection = con_pokemon}
+--number of pokemon per type from highest to lowest (Martin)
+SELECT type_1, COUNT(*) AS type_count
+FROM pokemon_info
+GROUP BY type_1
+ORDER BY type_count DESC;
+```
+
+```{sql connection = con_pokemon}
+-- tallest pokemon from each generation (Muizz)
+
+SELECT generation_id, pokemon, height
+FROM pokemon_info AS p1
+WHERE height = (SELECT MAX(height) 
+    FROM pokemon_info AS p2 
+    WHERE p1.generation_id = p2.generation_id) AND generation_id IS NOT NULL; --To remove the NA labelled generation, as it shows regional forms
+    
+--Allows user to get max height in each generation. I use the dataset twice here so it looks at pokemon for one and generation for the second, as I want to show both the pokemon name and generation in my result, and it doesnt let me sort it by both pokemon and generation at the same time otherwise
+
+```
+
+### ---------------------------------------------------------------------------
+
+# Creating data visualizations
+
+SQL code to find the generation with best average totals
+
+```{sql connection = con_pokemon}
+SELECT generation_id, AVG(hp + attack + defense + special_attack + special_defense + speed) AS total
+FROM pokemon_info
+WHERE generation_id IS NOT NULL -- excluding regional forms which dont have a listed generation number
+GROUP BY generation_id;
+
+```
+
+# Martin's Visualization
+
+```{sql connection=con_pokemon, output.var="generation_plot"}
+SELECT generation_id, AVG(hp + attack + defense + special_attack + special_defense + speed) AS total
+FROM pokemon_info
+WHERE generation_id IS NOT NULL
+GROUP BY generation_id;
+
+```
+
+```{r}
+ggplot(generation_plot, aes(x = generation_id, y = total, label = generation_id)) + 
+  geom_col(aes(fill = total)) + 
+  geom_text(aes(label = round(total)), nudge_y=10) + 
+  scale_fill_gradient(low = "white", high = "red") + #scale_color and scale_fill are different
+  labs(x = "Generation", y = "Average Stat Total", title = "Average Stats From Each Generation" ) + #this was fun
+  theme(legend.position = "none")
+```
+
+```{sql connection = con_pokemon}
+SELECT type, power 
+FROM moves
+WHERE power > 1 --Some moves have 0 base power as they are status/non-damaging moves, so I don't wish to count them here
+ORDER BY power DESC;
+
+--showing the base power of moves from highest to lowest (Muizz)
+```
+
+# Muizz's visualization
+```{sql connection=con_pokemon, output.var="type_plot"}
+SELECT type, power 
+FROM moves
+WHERE power > 1;
+```
+
+```{r}
+# base power of moves boxplot with respect to type, ordered by median
+ggplot(type_plot, aes(x = reorder(type, power, FUN = median), y = power, fill = type)) +
+  geom_boxplot(alpha = 0.6) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45), legend.position = "none") +
+  labs(title = "Distribution of Move Power By Type",
+       x = "Move Type",
+       y = "Base Power") 
+
+#shows that even though Normal has the highest base power (as shown in the above chunk), its median is the second lowest. Fire is consistently high power, highest median.
+
+```
+
+```{r}
+# terminate the SQL connection
+DBI::dbDisconnect(con_pokemon, shutdown = TRUE)
+```
+
+### ---------------------------------------------------------------------------
+
+# Sources
+
+-   https://www.kaggle.com/datasets/varlawend/competitive-pokmon-tier-dataset?resource=download&select=pokemon_df.csv/pokemon_df/LLM prompt
+
+-   https://www.kaggle.com/datasets/varlawend/competitive-pokmon-tier-dataset?resource=download&select=moves_df.csv/moves_df/LLM prompt
+
+-   https://github.com/rfordatascience/tidytuesday/blob/main/data/2025/2025-04-01/pokemon_df.csv/pokemon_info_df/LLM prompt
+
+### ---------------------------------------------------------------------------

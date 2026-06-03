@@ -3,12 +3,24 @@ project:
   output-dir: docs
 
 website:
-  title: "project"
+  title: "Martin Tran"
   navbar:
     left:
       - href: index.qmd
-        text: Home
-      - about.qmd
+        text: home
+      
+      - text: projects
+        menu: 
+          - href: sql_project.qmd
+            text: SQL project
+          - href: text_analysis_project.qmd
+            text: text analysis project
+          - href: Rpackage.qmd
+            text: dogR
+          - href: poster.html
+            text: History of S & R
+            
+      - href: about.qmd
 
 format:
   html:
@@ -17,6 +29,3 @@ format:
       - brand
     css: styles.css
     toc: true
-
-
-

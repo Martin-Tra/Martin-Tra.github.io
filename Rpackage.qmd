@@ -1,0 +1,64 @@
+---
+title: "Rpackage"
+format: html
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+#devtools::load_all()
+```
+
+# dogR
+
+The goal of `dogR` is to explore a dog dataset using functions to learn some fun characteristics and predictive modeling.
+
+## Installation
+
+You can install the development version of dogR from [GitHub](https://github.com/) with:
+
+``` r
+install.packages("devtools")
+devtools::install_github("ADC-405-S26/dogR")
+```
+## Warning
+When loading into another project, ensure that all other packages are cleared or updated when running.
+
+## Example
+
+Below are basic examples which shows you how to use the package's functions:
+
+Load the library
+```{r example}
+library(dogR)
+```
+
+Load the data set
+```{r}
+dogs_dataset <- dogs_dataset
+head(dogs_dataset)
+```
+
+Using get_breed_summary(x), you can get a quick summary of a specific dog breed.
+```{r summary}
+get_breed_summary("Airedale Terrier")
+```
+filter_dogs() takes in multiple filtering variables and returns an updated table.
+```{r filter}
+small_young_dogs <- filter_dogs(
+  max_weight = 10, 
+  max_age = 3, 
+  gender = "Female"
+)
+head(small_young_dogs)
+```
+
+plot_breed_weight("") returns a weight distribution count for a specific breed
+```{r plot}
+plot_breed_weight("Poodle")
+```

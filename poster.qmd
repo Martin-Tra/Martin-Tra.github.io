@@ -1,0 +1,119 @@
+---
+title: 'S, R, and Data Science'
+author:
+  - name: 'Muizz Aman Khan'
+    affil: 1
+  - name: 'Martin Tran'
+    affil: 1
+affiliation:
+  - num: 1
+    address: STAT 405 · Advanced Data Computing · iheiddown
+main_findings:
+  - "**The evolution of S into R**"
+  - "![](S_to_R_timeline.png){.main_pic}"
+main_textsize: "90px"
+main_picwidth: "60%"
+body_textsize: "50px"
+authorextra_textsize: "45px"
+affiliation_textsize: "45px"
+reference_textsize: "40px"
+primary_colour: "#1F3A5F"
+secondary_colour: "#3C6E91"
+accent_colour: "#E08E45"
+logoleft_name: '![](Rlogo.png){.main-img-left}'
+logoright_name: '![](lawrence-university-logo.png){.main-img-right}'
+output: 
+  iheiddown::iheiddown_betterland:
+    self_contained: true
+    pandoc_args: --mathjax
+    highlight: haddock
+    number_sections: false
+link-citations: true
+bibliography: packages.bib
+---
+<style>
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  
+  align-items: center;    
+}
+.main p {
+  padding-top: 0;           
+  text-align: center;
+  width: 98%;
+}
+.level1 > h1 {
+    background-color: #1F3A5F20;
+    color: #1F3A5F;
+    border-left: 8px solid #3C6E91;
+  }
+#title {
+  background-color: #1F3A5F;
+  color: #FFFFFF;
+  padding: 10mm 12mm;
+  border-radius: 10px;
+  border-bottom: 10px solid #E08E45;
+  margin-bottom: 0.3in;
+}
+</style>
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(results = 'asis',
+                      echo = FALSE,
+                      warning = FALSE,
+                      tidy = FALSE,
+                      message = FALSE,
+                      fig.align = 'center',
+                      out.width = "100%")
+options(knitr.table.format = "html") 
+```
+
+# Background
+
+Data science consists of techniques and their application to derive and communicate scientifically valid inferences and predictions based on relevant data. Stemming its roots to **data-analysis research at Bell Labs** (1960s–70s), inspired by John Tukey who pioneered data analysis. R is the open-source programming language heir to their goals of creating an collaborative and interactive environment [@chambers2020].
+
+
+# Three Design Principles
+
+ R's design in follows three ideas, all present since the first S:
+
+- **Objects** — everything that exists is an object
+- **Functions** — everything that happens is a function call
+- **Interfaces** — Compatibility to other languages (Fortran, C, C++) are built in
+
+# Why It Matters for Data Science
+
+- The **data frame** — a table of observations × variables. It became the central structure for scientific data.
+- **Models as objects** encouraged interactive exploration and visualization.
+- The **package repositories + CRAN** turned R into a vast, easy-to-use system.
+
+# Major Changes: S → R
+
+R is based off S's design but added key innovations of its own:
+
+- **Open-source & free** — R is a free "GNU S"; S is licensed (changed ownership with S-Plus).
+- **Packages + CRAN** — a standardized structure and central repository; Chambers claimed packages as R's most important feature.
+- **Lexical scoping** — From Scheme/Lisp; object references changes environment.
+- **Lazy evaluation** — arguments are evaluated only when needed, via "promise" objects.
+
+# From S to Today
+
+The core ideas from S still anchor modern data science:
+
+| S | Lives on today as |
+|---|---|
+| Data frame | retained `data.frame` object type |
+| Vectorization | Default for math & logic |
+|`NA` concept | `NA` used across char, numeric types |
+| Language Interfaces | Rcpp, Fortran, C++ |
+| Package sharing | CRAN (20,000+ packages) |
+| First-class Visualizations | ggplot2, base model graphics|
+
+# Conclusion
+
+R wasn't designed to do specific tasks and jobs that happened to suit data science, it was shaped *by* passionate data analysis researchers since the beginning to create a language that allows many to have an interactive environment to work with data.
+
+# References
+
+

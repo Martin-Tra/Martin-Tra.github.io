@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Muizz Aman Khan">
+<meta name="author" content="Martin Tran">
 
-<title>about – Martin Tran</title>
+<title>S, R, and Data Science – Martin Tran</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,7 +22,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -94,14 +116,6 @@ ul.task-list li input[type="checkbox"] {
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">home</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./teaching.qmd"> 
-<span class="menu-text">teaching</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./research.qmd"> 
-<span class="menu-text">research</span></a>
-  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">projects</span>
@@ -117,12 +131,16 @@ ul.task-list li input[type="checkbox"] {
   </li>  
         <li>
     <a class="dropdown-item" href="./Rpackage.html">
- <span class="dropdown-text">R package</span></a>
+ <span class="dropdown-text">dogR</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./poster.html">
+ <span class="dropdown-text">History of S &amp; R</span></a>
   </li>  
     </ul>
   </li>
   <li class="nav-item">
-    <a class="nav-link active" href="./about.html" aria-current="page"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">about</span></a>
   </li>  
 </ul>
@@ -136,21 +154,40 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
+  <li><a href="#three-design-principles" id="toc-three-design-principles" class="nav-link" data-scroll-target="#three-design-principles">Three Design Principles</a></li>
+  <li><a href="#why-it-matters-for-data-science" id="toc-why-it-matters-for-data-science" class="nav-link" data-scroll-target="#why-it-matters-for-data-science">Why It Matters for Data Science</a></li>
+  <li><a href="#major-changes-s-r" id="toc-major-changes-s-r" class="nav-link" data-scroll-target="#major-changes-s-r">Major Changes: S → R</a></li>
+  <li><a href="#from-s-to-today" id="toc-from-s-to-today" class="nav-link" data-scroll-target="#from-s-to-today">From S to Today</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">about</h1>
+<h1 class="title">S, R, and Data Science</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-contents">
+             <p>Muizz Aman Khan </p>
+             <p>Martin Tran </p>
+          </div>
+  </div>
     
   
     
@@ -161,11 +198,117 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Hi</p>
+<style>
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  
+  align-items: center;    
+}
+.main p {
+  padding-top: 0;           
+  text-align: center;
+  width: 98%;
+}
+.level1 > h1 {
+    background-color: #1F3A5F20;
+    color: #1F3A5F;
+    border-left: 8px solid #3C6E91;
+  }
+#title {
+  background-color: #1F3A5F;
+  color: #FFFFFF;
+  padding: 10mm 12mm;
+  border-radius: 10px;
+  border-bottom: 10px solid #E08E45;
+  margin-bottom: 0.3in;
+}
+</style>
+<section id="background" class="level1">
+<h1>Background</h1>
+<p>Data science consists of techniques and their application to derive and communicate scientifically valid inferences and predictions based on relevant data. Stemming its roots to <strong>data-analysis research at Bell Labs</strong> (1960s–70s), inspired by John Tukey who pioneered data analysis. R is the open-source programming language heir to their goals of creating an collaborative and interactive environment <span class="citation" data-cites="chambers2020">(<a href="#ref-chambers2020" role="doc-biblioref">Chambers 2020</a>)</span>.</p>
+</section>
+<section id="three-design-principles" class="level1">
+<h1>Three Design Principles</h1>
+<p>R’s design in follows three ideas, all present since the first S:</p>
+<ul>
+<li><strong>Objects</strong> — everything that exists is an object</li>
+<li><strong>Functions</strong> — everything that happens is a function call</li>
+<li><strong>Interfaces</strong> — Compatibility to other languages (Fortran, C, C++) are built in</li>
+</ul>
+</section>
+<section id="why-it-matters-for-data-science" class="level1">
+<h1>Why It Matters for Data Science</h1>
+<ul>
+<li>The <strong>data frame</strong> — a table of observations × variables. It became the central structure for scientific data.</li>
+<li><strong>Models as objects</strong> encouraged interactive exploration and visualization.</li>
+<li>The <strong>package repositories + CRAN</strong> turned R into a vast, easy-to-use system.</li>
+</ul>
+</section>
+<section id="major-changes-s-r" class="level1">
+<h1>Major Changes: S → R</h1>
+<p>R is based off S’s design but added key innovations of its own:</p>
+<ul>
+<li><strong>Open-source &amp; free</strong> — R is a free “GNU S”; S is licensed (changed ownership with S-Plus).</li>
+<li><strong>Packages + CRAN</strong> — a standardized structure and central repository; Chambers claimed packages as R’s most important feature.</li>
+<li><strong>Lexical scoping</strong> — From Scheme/Lisp; object references changes environment.</li>
+<li><strong>Lazy evaluation</strong> — arguments are evaluated only when needed, via “promise” objects.</li>
+</ul>
+</section>
+<section id="from-s-to-today" class="level1">
+<h1>From S to Today</h1>
+<p>The core ideas from S still anchor modern data science:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>S</th>
+<th>Lives on today as</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data frame</td>
+<td>retained <code>data.frame</code> object type</td>
+</tr>
+<tr class="even">
+<td>Vectorization</td>
+<td>Default for math &amp; logic</td>
+</tr>
+<tr class="odd">
+<td><code>NA</code> concept</td>
+<td><code>NA</code> used across char, numeric types</td>
+</tr>
+<tr class="even">
+<td>Language Interfaces</td>
+<td>Rcpp, Fortran, C++</td>
+</tr>
+<tr class="odd">
+<td>Package sharing</td>
+<td>CRAN (20,000+ packages)</td>
+</tr>
+<tr class="even">
+<td>First-class Visualizations</td>
+<td>ggplot2, base model graphics</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>R wasn’t designed to do specific tasks and jobs that happened to suit data science, it was shaped <em>by</em> passionate data analysis researchers since the beginning to create a language that allows many to have an interactive environment to work with data.</p>
+</section>
+<section id="references" class="level1">
 
 
 
-</main> <!-- /main -->
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-chambers2020" class="csl-entry" role="listitem">
+Chambers, John M. 2020. <span>“S, r, and Data Science.”</span> <em>The R Journal</em> 11 (1): 462–76.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
