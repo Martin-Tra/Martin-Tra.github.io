@@ -19,6 +19,8 @@ website:
             text: dogR
           - href: poster.html
             text: History of S & R
+          - href: Automation_Prediction_Report.html
+            text: Datathon Automation
             
       - href: about.qmd
 
