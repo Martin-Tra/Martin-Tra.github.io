@@ -13,7 +13,7 @@ website:
         menu: 
           - href: sql_project.qmd
             text: SQL project
-          - href: text_analysis_project.qmd
+          - href: text_analysis.qmd
             text: text analysis project
           - href: Rpackage.qmd
             text: dogR
