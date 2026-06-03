@@ -103,5 +103,33 @@
     "title": "About me",
     "section": "",
     "text": "Programming: Java, C++, R\nTools: Google Suite (Docs, Sheets, Slides), Excel\nStrengths: Punctual, cooperative, customer-oriented, flexible, team player"
+  },
+  {
+    "objectID": "sql_project.html",
+    "href": "sql_project.html",
+    "title": "sql_project",
+    "section": "",
+    "text": "SQL project using duckdb in R. Full source code found in [Github]"
+  },
+  {
+    "objectID": "sql_project.html#count-of-baby-pokemon-in-each-generation",
+    "href": "sql_project.html#count-of-baby-pokemon-in-each-generation",
+    "title": "sql_project",
+    "section": "Count of Baby Pokemon in Each Generation",
+    "text": "Count of Baby Pokemon in Each Generation\nThe query below returns the amount of Pokemon in each generation that are not fully evolved/developed or part of the LC category(little cup, refers to baby Pokemon) and if they are in the Monster egg group\n\nSELECT generation_id AS gen, COUNT(*) AS num_pokemon\nFROM pokemon_info\nJOIN pokemon ON pokemon_info.pokemon = pokemon.name\nWHERE (pokemon.formats = 'NFE' OR pokemon.formats = 'LC') AND (egg_group_1 = 'monster' OR egg_group_2 = 'monster')\nGROUP BY gen;\n\n\n8 records\n\n\ngen\nnum_pokemon\n\n\n\n\n1\n14\n\n\n2\n2\n\n\n3\n8\n\n\n4\n3\n\n\n5\n2\n\n\n6\n4\n\n\n7\n1\n\n\n8\n2\n\n\n\n\n\nThe query returns the number of priority moves with any priority\n\nSELECT COUNT(*) AS num_rows\nFROM moves\nWHERE priority &lt;&gt; 0;\n\n\n1 records\n\n\nnum_rows\n\n\n\n\n44\n\n\n\n\n\nThis query returns the base stat total of pokemon in OU tier from highest to lowest.\n\n\nSELECT pokemon, base_experience, formats, (pokemon_info.hp + pokemon_info.attack + pokemon_info.defense + pokemon_info.special_attack + pokemon_info.special_defense + pokemon_info.speed) AS total\nFROM pokemon_info\nJOIN pokemon ON pokemon.name = pokemon_info.pokemon\nWHERE formats = 'OU'\nORDER BY total DESC\nLIMIT 10;\n\n\nDisplaying records 1 - 10\n\n\npokemon\nbase_experience\nformats\ntotal\n\n\n\n\nKyurem\n297\nOU\n660\n\n\nZeraora\n270\nOU\n600\n\n\nDragonite\n270\nOU\n600\n\n\nHeatran\n270\nOU\n600\n\n\nTyranitar\n270\nOU\n600\n\n\nGarchomp\n270\nOU\n600\n\n\nHydreigon\n270\nOU\n600\n\n\nDragapult\n300\nOU\n600\n\n\nMelmetal\n270\nOU\n600\n\n\nZapdos\n261\nOU\n580\n\n\n\n\n\nThe query returns the heaviest Pokemon in the OU (overused) competitive category.\n\nSELECT name, weight, formats\nFROM pokemon\nWHERE formats = 'OU'\nORDER BY weight DESC\nLIMIT 1;\n\n\n1 records\n\n\nname\nweight\nformats\n\n\n\n\nMelmetal\n800\nOU\n\n\n\n\n\nThe query returns the Pokemon that are poison types in the UU (underused) category\n\nSELECT pokemon, type_1, type_2, pokemon.formats\nFROM pokemon_info\nJOIN pokemon ON pokemon_info.pokemon=pokemon.name\nWHERE (type_1 = 'poison' OR type_2 = 'poison') AND pokemon.formats = 'UU';\n\n\n4 records\n\n\npokemon\ntype_1\ntype_2\nformats\n\n\n\n\nNidoqueen\npoison\nground\nUU\n\n\nTentacruel\nwater\npoison\nUU\n\n\nAmoonguss\ngrass\npoison\nUU\n\n\nNihilego\nrock\npoison\nUU\n\n\n\n\n\nThis query returns the top 10 lightest pokemon.\n\nSELECT pokemon, weight\nFROM pokemon_info\nORDER BY weight\nLIMIT 10;\n\n\nDisplaying records 1 - 10\n\n\npokemon\nweight\n\n\n\n\nGastly\n0.1\n\n\nHaunter\n0.1\n\n\nFlabebe\n0.1\n\n\nCosmog\n0.1\n\n\nKartana\n0.1\n\n\nSinistea\n0.1\n\n\nCutiefly\n0.2\n\n\nRotom\n0.3\n\n\nUxie\n0.3\n\n\nWishiwashi-Solo\n0.3\n\n\n\n\n\nThis query returns the number of Pokemon per type from highest to lowest\n\nSELECT type_1, COUNT(*) AS type_count\nFROM pokemon_info\nGROUP BY type_1\nORDER BY type_count DESC;\n\n\nDisplaying records 1 - 10\n\n\ntype_1\ntype_count\n\n\n\n\nwater\n123\n\n\nnormal\n109\n\n\ngrass\n87\n\n\nbug\n75\n\n\npsychic\n65\n\n\nfire\n59\n\n\nrock\n53\n\n\nelectric\n50\n\n\ndark\n43\n\n\npoison\n40\n\n\n\n\n\nThis query returns the tallest Pokemon from each generation\n\nSELECT generation_id, pokemon, height\nFROM pokemon_info AS p1\nWHERE height = (SELECT MAX(height) \n    FROM pokemon_info AS p2 \n    WHERE p1.generation_id = p2.generation_id) AND generation_id IS NOT NULL; --To remove the NA labelled generation, as it shows regional forms\n    \n--Allows user to get max height in each generation. I use the dataset twice here so it looks at pokemon for one and generation for the second, as I want to show both the pokemon name and generation in my result, and it doesnt let me sort it by both pokemon and generation at the same time otherwise\n\n\n8 records\n\n\ngeneration_id\npokemon\nheight\n\n\n\n\n1\nOnix\n8.8\n\n\n2\nSteelix\n9.2\n\n\n3\nWailord\n14.5\n\n\n4\nDialga\n5.4\n\n\n5\nSerperior\n3.3\n\n\n6\nYveltal\n5.8\n\n\n7\nCelesteela\n9.2\n\n\n8\nEternatus\n20.0"
+  },
+  {
+    "objectID": "sql_project.html#martins-visualization",
+    "href": "sql_project.html#martins-visualization",
+    "title": "sql_project",
+    "section": "Martin’s Visualization",
+    "text": "Martin’s Visualization\n\n\nCode\nSELECT generation_id, AVG(hp + attack + defense + special_attack + special_defense + speed) AS total\nFROM pokemon_info\nWHERE generation_id IS NOT NULL\nGROUP BY generation_id;"
+  },
+  {
+    "objectID": "sql_project.html#muizzs-visualization",
+    "href": "sql_project.html#muizzs-visualization",
+    "title": "sql_project",
+    "section": "Muizz’s visualization",
+    "text": "Muizz’s visualization\nThis query shows the base power of moves from highest to lowest\n\n\n\n\n\n\n\n\n\n\n—————————————————————————"
   }
 ]

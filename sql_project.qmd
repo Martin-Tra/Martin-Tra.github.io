@@ -1,9 +1,9 @@
 ---
 title: "sql_project"
 format: html
-author: "Group Members: [Muizz] & [Martin]"
+author: "In Collaboration with [Muizz Aman Khan](https://github.com/Muizz-Aman)" 
 ---
-
+SQL project using duckdb in R. Full source code found in [[Github](https://github.com/ADC-405-S26/Project_2_SQL_Team_3)]
 
 ```{r setup}
 #| message: false
@@ -19,33 +19,26 @@ library(duckdb)# R package for building a duckdb database locally
 # install.packages("package_name")
 # library(package_name)
 ```
-
-### ---------------------------------------------------------------------------
-
-# Designing the database
-
+# Creating Database
+An empty database is created called pokemon_db. In order to access the database, we are setting up a connection to pokemon_db called con_pokemon
 ```{r}
 con_pokemon <- DBI::dbConnect(duckdb::duckdb(), dbdir = "pokemon_db")
-# create an empty database called pokemon_db
-# set up a connection to that db called con_pokemon
+
 ```
 
 ```{sql connection=con_pokemon}
 USE pokemon_db;
 ```
 
-### ---------------------------------------------------------------------------
-
-# Accessing data
-
-## pokemon
-
+We are accessing the data in three data sets used in this project. `Pokemon`, `Pokemon_DF`, and `Moves`.
 ```{sql connection=con_pokemon}
--- To make sure no other outdated tables exist in the database, we drop then create the tables
+--| echo: false
+--| include: false
 DROP TABLE IF EXISTS pokemon;
 ```
 
 ```{sql connection=con_pokemon}
+--| code-fold: true
 CREATE TABLE pokemon (
   name       VARCHAR(255) NOT NULL DEFAULT ' ',  -- competitive name; unique, so primary key
   hp         SMALLINT NOT NULL DEFAULT 0,         -- base stats top out ~255, SMALLINT 
@@ -66,13 +59,14 @@ CREATE TABLE pokemon (
 COPY pokemon FROM 'pokemon_df.csv' (FORMAT CSV, HEADER, NULL 'NA');
 ```
 
-## moves
-
 ```{sql connection=con_pokemon}
+--| echo: false
+--| include: false
 DROP TABLE IF EXISTS moves;
 ```
 
 ```{sql connection=con_pokemon}
+--| code-fold: true
 CREATE TABLE moves (
   name        VARCHAR(255) NOT NULL DEFAULT ' ',  -- move name; unique, so primary key
   category    VARCHAR(255),                        -- Physical / Special / Non-Damaging
@@ -90,13 +84,15 @@ CREATE TABLE moves (
 COPY moves FROM 'moves_df.csv' (FORMAT CSV, HEADER, NULL 'NA');
 ```
 
-## pokemon_info
 
 ```{sql connection=con_pokemon}
+--| echo: false
+--| include: false
 DROP TABLE IF EXISTS pokemon_info;
 ```
 
 ```{sql connection=con_pokemon}
+--| code-fold: true
 CREATE TABLE pokemon_info (
   id              INTEGER NOT NULL DEFAULT 0,        -- unique row id, so primary key
   pokemon         VARCHAR(255) NOT NULL DEFAULT ' ', -- name; links to pokemon.name
@@ -134,29 +130,12 @@ Check the tables in the database
 SHOW TABLES;
 ```
 
-```{sql connection=con_pokemon}
-DESCRIBE pokemon;
-```
-
-
-Check if data aligns with the files
-
-```{sql connection=con_pokemon}
-SELECT * FROM moves LIMIT 10;
-```
-
-```{sql connection=con_pokemon}
-SELECT * FROM pokemon_info LIMIT 10;
-```
-
-### ---------------------------------------------------------------------------
-
 # Querying data using SQL
+The datasets contain information of each specific Pokemon up to generation 8. With each character, there is information on it's abilities, strengths, color, identification, etc,. With each query, we are accessing the database and our three csv files to get information that would take a longer time searching up online than writing a query to get a desired Pokemon or a list of Pokemon with specific features. If we are looking for a Pokemon with a specific typing and variables, we can do it with SQL. Below are queries we completed to find desired information regarding Pokemon.
 
-The datasets contain information of each specific Pokemon up to generation 8. With each character, there is information on it's abilities, strengths, color, identification, etc,. With each query, we are accessing the database and our three csv files to get information that would take a longer time searching up online than writing a query to get a desired Pokemon or a list of Pokemon with specific features. If we are looking for a Pokemon with a specific typing and variables, we can do it with SQL.
+### Count of Baby Pokemon in Each Generation  
+The query below returns the amount of Pokemon in each generation that are not fully evolved/developed or part of the LC category(little cup, refers to baby Pokemon) and if they are in the Monster egg group
 ```{sql connection=con_pokemon}
---how many pokemon in each generation in NFE(not fully evolved, doesnt include baby pokemon like charmander) or LC(little cup, refers to baby pokemon) tiers are in the Monster egg group (Muizz)
-
 SELECT generation_id AS gen, COUNT(*) AS num_pokemon
 FROM pokemon_info
 JOIN pokemon ON pokemon_info.pokemon = pokemon.name
@@ -164,15 +143,17 @@ WHERE (pokemon.formats = 'NFE' OR pokemon.formats = 'LC') AND (egg_group_1 = 'mo
 GROUP BY gen;
 ```
 
+### Priority Moves
+The query returns the number of priority moves with any priority stats
 ```{sql connection=con_pokemon}
---number of priority moves (positive priority) (Martin)
 SELECT COUNT(*) AS num_rows
 FROM moves
 WHERE priority <> 0;
 ```
 
+### Base Total of OU's
+This query returns the base stat total of pokemon in OU tier from highest to lowest.
 ```{sql connection=con_pokemon}
--- base stat total of pokemon in OU tier from highest to lowest (Martin)
 
 SELECT pokemon, base_experience, formats, (pokemon_info.hp + pokemon_info.attack + pokemon_info.defense + pokemon_info.special_attack + pokemon_info.special_defense + pokemon_info.speed) AS total
 FROM pokemon_info
@@ -183,9 +164,9 @@ LIMIT 10;
 
 ```
 
+### Heaviest in OU's
+The query returns the heaviest Pokemon in the OU (overused) competitive category.
 ```{sql connection=con_pokemon}
--- heaviest pokemon in the OU (overused) competitive format (Muizz)
-
 SELECT name, weight, formats
 FROM pokemon
 WHERE formats = 'OU'
@@ -193,9 +174,9 @@ ORDER BY weight DESC
 LIMIT 1;
 ```
 
+### Poison in UU's
+The query returns the Pokemon that are poison types in the UU (underused) category
 ```{sql connection=con_pokemon}
---which pokemon that are poison types are in UU (underused) format (Muizz)
-
 SELECT pokemon, type_1, type_2, pokemon.formats
 FROM pokemon_info
 JOIN pokemon ON pokemon_info.pokemon=pokemon.name
@@ -203,26 +184,27 @@ WHERE (type_1 = 'poison' OR type_2 = 'poison') AND pokemon.formats = 'UU';
 
 ```
 
+### Top 10 Lightest Pokemon
+This query returns the top 10 lightest pokemon.
 ```{sql connection=con_pokemon}
--- Top 10 lightest pokemon (Martin)
 SELECT pokemon, weight
 FROM pokemon_info
 ORDER BY weight
 LIMIT 10;
-
 ```
 
+### Count of Types
+This query returns the number of Pokemon per type from highest to lowest
 ```{sql connection = con_pokemon}
---number of pokemon per type from highest to lowest (Martin)
 SELECT type_1, COUNT(*) AS type_count
 FROM pokemon_info
 GROUP BY type_1
 ORDER BY type_count DESC;
 ```
 
+### Tallest in Each Gen
+This query returns the tallest Pokemon from each generation
 ```{sql connection = con_pokemon}
--- tallest pokemon from each generation (Muizz)
-
 SELECT generation_id, pokemon, height
 FROM pokemon_info AS p1
 WHERE height = (SELECT MAX(height) 
@@ -233,12 +215,9 @@ WHERE height = (SELECT MAX(height)
 
 ```
 
-### ---------------------------------------------------------------------------
+# Creating Data Visualizations
 
-# Creating data visualizations
-
-SQL code to find the generation with best average totals
-
+This query returns the generation with best average totals
 ```{sql connection = con_pokemon}
 SELECT generation_id, AVG(hp + attack + defense + special_attack + special_defense + speed) AS total
 FROM pokemon_info
@@ -246,10 +225,9 @@ WHERE generation_id IS NOT NULL -- excluding regional forms which dont have a li
 GROUP BY generation_id;
 
 ```
-
-# Martin's Visualization
-
+## Martin's Visualization
 ```{sql connection=con_pokemon, output.var="generation_plot"}
+--| code-fold: true
 SELECT generation_id, AVG(hp + attack + defense + special_attack + special_defense + speed) AS total
 FROM pokemon_info
 WHERE generation_id IS NOT NULL
@@ -257,7 +235,7 @@ GROUP BY generation_id;
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 ggplot(generation_plot, aes(x = generation_id, y = total, label = generation_id)) + 
   geom_col(aes(fill = total)) + 
   geom_text(aes(label = round(total)), nudge_y=10) + 
@@ -265,24 +243,26 @@ ggplot(generation_plot, aes(x = generation_id, y = total, label = generation_id)
   labs(x = "Generation", y = "Average Stat Total", title = "Average Stats From Each Generation" ) + #this was fun
   theme(legend.position = "none")
 ```
-
+## Muizz's visualization
+This query shows the base power of moves from highest to lowest
 ```{sql connection = con_pokemon}
+--| echo: false
+--| include: false
 SELECT type, power 
 FROM moves
 WHERE power > 1 --Some moves have 0 base power as they are status/non-damaging moves, so I don't wish to count them here
 ORDER BY power DESC;
-
---showing the base power of moves from highest to lowest (Muizz)
 ```
 
-# Muizz's visualization
 ```{sql connection=con_pokemon, output.var="type_plot"}
+--| echo: false
+--| include: false
 SELECT type, power 
 FROM moves
 WHERE power > 1;
 ```
 
-```{r}
+```{r, echo=FALSE}
 # base power of moves boxplot with respect to type, ordered by median
 ggplot(type_plot, aes(x = reorder(type, power, FUN = median), y = power, fill = type)) +
   geom_boxplot(alpha = 0.6) +
@@ -296,7 +276,7 @@ ggplot(type_plot, aes(x = reorder(type, power, FUN = median), y = power, fill = 
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 # terminate the SQL connection
 DBI::dbDisconnect(con_pokemon, shutdown = TRUE)
 ```

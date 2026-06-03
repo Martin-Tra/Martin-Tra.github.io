@@ -19,7 +19,7 @@ The goal of `dogR` is to explore a dog dataset using functions to learn some fun
 
 ## Installation
 
-You can install the development version of dogR from [GitHub](https://github.com/) with:
+You can install the development version of dogR from [GitHub](https://github.com/ADC-405-S26/dogR) with:
 
 ``` r
 install.packages("devtools")
