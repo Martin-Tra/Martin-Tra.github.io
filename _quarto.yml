@@ -14,7 +14,7 @@ website:
           - href: sql_project.qmd
             text: SQL project
           - href: text_analysis.qmd
-            text: text analysis project
+            text: Text Analysis Project
           - href: Rpackage.qmd
             text: dogR
           - href: poster.html
