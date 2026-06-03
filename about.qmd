@@ -1,5 +1,59 @@
 ---
-title: "about"
+title: "About me"
+image: images/about.jpg
+toc: false
+about: 
+  template: trestles
+  image-shape: round
+  image-width: 20em
 ---
 
-Hi
+::: {#bio}
+
+## Education
+
+**Lawrence University | Appleton, WI**  
+Bachelor of Arts in Computer Science  
+Expected June 2027  
+
+**Saint Joseph Notre Dame High School | Alameda, CA**  
+High School Diploma  
+2019 – 2023  
+
+
+## Work Experience
+
+**Student Manager, American Dining Creation | Appleton, WI**  
+Mar 2026 – Present  
+
+**Student Worker, American Dining Creation | Appleton, WI**  
+Feb 2025 – Mar 2026  
+
+**Student Mascot, Lawrence University | Appleton, WI**  
+Oct 2024 – Present  
+
+**Esports Monitor, Lawrence University | Appleton, WI**  
+Sep 2024 – Mar 2026  
+
+**Barista/Cashier, Laca Bakery | Hayward, CA**  
+Mar – Sep 2023  
+
+**Student Intern, UC Berkeley IT Department | Berkeley, CA**  
+Summer 2023  
+
+**Student Intern, UC Berkeley Unboxing Data Science Program | Berkeley, CA**  
+Summer 2022  
+
+## Skills
+Programming: Java, C++, R
+
+Tools: Google Suite (Docs, Sheets, Slides), Excel
+
+Strengths: Punctual, cooperative, customer-oriented, flexible, team player
+
+::: {#landing-icons}
+[{{< fa brands github title="github" >}}](https://github.com/Martin-Tra){target="_blank"} &nbsp; 
+[{{< fa envelope title="envelope" >}}](mailto:martin.tran@lawrence.edu)
+:::
+
+:::

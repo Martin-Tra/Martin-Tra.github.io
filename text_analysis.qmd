@@ -16,7 +16,7 @@ library(tidygraph)
 moves <- read.csv("moves_df.csv")
 ```
 
-INTRODUCTION
+# INTRODUCTION
 
   Pokemon is a Japanese media franchise with major influence in the toys, collectibles, and animation industry. Originally gone by Pocket Monsters, Pokemon is a recognizable franchise that has grown on a massive scale within the past three decades. The franchise takes place in a fictional universe where monsters, called Pokemon, live alongside humans while having special abilities and powers. They use those powers mainly in battle, where Pokemon go against one another to see who comes out on top. Moves refer to techniques Pokemon use in battle. These moves, along with a Pokemon's stats determine the results of a battle, along with the selection of moves. In our blog, we will investigate the moves the Pokemon have and the unique characteristics that enabled the specimens to enact their powers.
 
@@ -30,6 +30,7 @@ INTRODUCTION
 
   There are two main formats with moves having a significant importance in the battles and gameplay. That being casual and competitive. In our analysis, we will lean towards more a competitive and more practical viewpoint. In the game and animation, Pokemon are only allowed to remember a moveset with up to four moves. Each person is only allowed to use up to six pokemon. People, or trainers, will have to use these limited moves to compete against other trainers and pokemon. But before we get into the specifics, let's talk about the physical-special split. Every move can either be physical, which refers to mainly contact based moves and are stronger based on the Pokemon's Attack stat, or special, which refers to moves that are ranged that are stronger based on the Pokemon's Special Attack stat. Along with these categories, there is a category which contains non-damaging moves as well. These moves are usually more strategic and used for a number of purposes, like increasing the stats of your own Pokemon, or inflicting a status condition on the opponent (We'll cover status conditions later in the blog post).
 
+# Tokenization
 The tokenization below shows the naming of pokemon moves. It shows how physical, special and non dmg moves are named.
 ```{r}
 tokens2 <- moves %>%
@@ -43,8 +44,7 @@ head(tokens2)
   The table above shows that physical moves like mentioned earlier tend to be contact moves, like punches and kicks, whereas non damage moves are ranged like beams and pulses. The use for this is to differentiate and clarify the difference in those moves and how one can easily tell if the moves are physical, special, or non damaging by looking at the name alone.
 
   We decided to use tokenization again to determine the difference in the descriptions of damaging and non damaging moves. This has been done in order to have a deeper understanding of the importance of non damaging moves. More casual players tend to keep only damaging moves on their Pokemon due to the seemingly low difficulty of the mainline games, though the competitive side is a whole different story. Knowing the purpose of non damaging moves is helpful and it allows one's moveset to diversify according to a number of situations in battle. They may be the true turning point in a battle too, where a certain stat increase/decrease would win/lose you the entire match. Below is the code for our tokenization for move descriptions, highlighting the top 10 most used words (aside from stop words like 'the', 'and', etc) in physical, special and non-damaging moves.
-  
-Tokenization
+ 
 ```{r}
 # TOP 10 MOST REPEATED WORDS/TERMS IN MOVE DESCRIPTIONS OF EACH CATEGORY
 tokens <- moves %>%
@@ -63,11 +63,11 @@ head(top_words,10)
 ```
   As seen above, damaging moves have keywords like 'power', 'target', 'chance'. Non-damaging moves are dominated by words like raises, lowers, user. Non-damaging moves directly effect stats of either your own Pokemon or the opposing Pokemon, allowing you or your opponent to change the tide of the battle completely. 
 
+# Regular Expressions
   When we talk about status conditions, they can be inflicted by both damaging or non-damaging moves. For example a non-damaging move Will-o-wisp has a guaranteed chance to burn the opponent, whereas a damaging move Fire Punch has a 10% chance to burn the opponent. One could say "oh why don't we just use the attacking move? It does damage along with a chance to burn so it's a win-win right?" Wrong. The explanation here is the status "Burn" cuts the Pokemon's attack stat in half when inflicted, so it'll hit half as hard using physical moves if burned. So against a strong physical attacking Pokemon like let's say Haxorus which has a base attack stat if 147, hitting it with fire punch isn't going to do much as it's not very effective due to match-ups, but will-o-wisp will guarantee a burn, making it so Haxorus won't do much damage for the rest of the battle. Instead of relying on chance, you get a guaranteed debuff on your opponent so they have to change up their game plan to move around it.
 
   For showing status effects and the variety of status moves across the entire list of moves, we used Regular Expressions to count moves that have either a chance or guarantee inficting a status condition onto an opponent. These status conditions include Burn, Paralysis, Sleep, Freeze, and Poison. The code along with the graph below show the amount of moves which have status conditions, allowing players to see which status condition is most common.
 
-REGULAR EXPRESSIONS
 ```{r}
 moves_status <- moves |> 
   mutate(
@@ -111,9 +111,8 @@ Burn has the highest number of moves, freeze lowest
 
   According to the graph above and the table created, we see that 'Burn' is most commonly seen in moves, followed by paralysis, poison, sleep, and then freeze. All of these status conditions are useful in their own way, some requiring more luck than strategy like Freeze and Sleep in a number of occasions. Burn seems to be the most abundant of them all and arguably the most game changing as well due to it halving the attack of the Pokemon. It goes to show how these status effects are spread across a lot of Pokemon's movepools and how a number of people tend to overlook them when causually playing through the mainline games.
 
+# Sentiment Analysis
   We performed sentiment analysis on each category of moves based on their description. Positive sentiment would include increasing stats, negative would be inflicting burn or decreasing stats, none would be normal damaging moves for the most part.
-
-Sentiment Analysis
 ```{r}
 bing <- tidytext::get_sentiments("bing")
 
@@ -138,6 +137,7 @@ ggplot(sentiment_counts, aes(x = sentiment, y = n, fill = category)) +
 ```
   The visualization above shows that physical moves have the most neutral and negative sentiments, while non-damaging moves have the most positive sentiments. That is most likely due to the stat boosting moves like 'Swords Dance' or 'Dragon Dance'. However, due to the majority of moves being NAs, we can't make a promising hypothesis. This is likely due to the sentiment analysis not being large enough to cover words used in the move descriptions. This includes "bing" and "nrc" sentiments.
 
+# TF-IDF Analysis
   A tf-idf analysis lets us see the frequency of words in the descriptions and how often they are used, allowing us to have a good indication of how often we would see moves with that specific word. This is proven useful as we get an idea of how often a move is used and what the outcome from it can be. In the analysis, there are three categories for the moves: special, physical, and non-damaging. For special moves, the words shown most frequently are chance, lower, and 10. There are a good amount of moves with description relating to those three words. Such as saying it has a 10% chance to lower a certain stat. Following that structure, we can the an approximate probability of a move in the category will behave if we had no knowledge of the move itself. It is not the best indicator but it works to give us a basic intuition.
 ```{r}
 tf_idf <- tokens %>% 

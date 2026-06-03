@@ -1,11 +1,11 @@
 ---
 title: "Martin's Website"
-image: images/GroupPic.jpg
+image: images/front.jpg
 toc: false
 about: 
-  template: jolla
-  image-shape: round
-  image-width: 15em
+  template: trestles
+  image-shape: rounded
+  image-width: 40em
 ---
 
 ::: {#bio}
@@ -19,7 +19,9 @@ Outside the academic world, I like running, playing games, and having delicious 
 
 
 ::: {#landing-icons}
-[{{< fa brands github title="github" >}}](https://github.com/Martin-Tra){target="_blank"} &nbsp; [{{< fa envelope title="envelope" >}}](mailto:martin.tran@lawrence.edu)
+[{{< fa brands github title="github" >}}](https://github.com/Martin-Tra){target="_blank"} 
+[{{< fa envelope title="envelope" >}}](mailto:martin.tran@lawrence.edu)
+[{{< fa brands linkedin title="linkedin" >}}](https://www.linkedin.com/in/martin-tran-769656215/){target="_blank"}
 :::
 :::
 

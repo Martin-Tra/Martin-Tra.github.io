@@ -1,5 +1,5 @@
 ---
-title: "Rpackage"
+title: "dogR (R package)"
 format: html
 output: github_document
 ---
@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
 #devtools::load_all()
 ```
 
-# dogR
 
 The goal of `dogR` is to explore a dog dataset using functions to learn some fun characteristics and predictive modeling.
 

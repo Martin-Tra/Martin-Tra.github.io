@@ -4,6 +4,9 @@ project:
 
 website:
   title: "Martin Tran"
+  site-url: https://Martin-Tra.github.io/
+  repo-url: https://github.com/Martin-Tra/Martin-Tra.github.io
+  favicon: images/pokemon.png
   navbar:
     left:
       - href: index.qmd
@@ -17,17 +20,19 @@ website:
             text: Text Analysis Project
           - href: Rpackage.qmd
             text: dogR
-          - href: poster.html
+          - href: poster.qmd
             text: History of S & R
-          - href: Automation_Prediction_Report.html
+          - href: Automation_Report.qmd
             text: Datathon Automation
             
       - href: about.qmd
-
+        text: About
 format:
   html:
     theme:
-      - cosmo
+      - lux
       - brand
     css: styles.css
     toc: true
+    page-layout: full
+    smooth-scroll: true

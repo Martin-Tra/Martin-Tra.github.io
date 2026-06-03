@@ -1,0 +1,6 @@
+---
+title: "Poster Presentation of the History of S to R"
+format: html
+---
+
+[![Visualization](poster.png){width=100%}](posterview.html)
