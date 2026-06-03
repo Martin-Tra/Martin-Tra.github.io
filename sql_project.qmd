@@ -31,9 +31,7 @@ con_pokemon <- DBI::dbConnect(duckdb::duckdb(), dbdir = "pokemon_db")
 ```
 
 ```{sql connection=con_pokemon}
-
 USE pokemon_db;
-
 ```
 
 ### ---------------------------------------------------------------------------
