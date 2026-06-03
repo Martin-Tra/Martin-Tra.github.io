@@ -6,7 +6,7 @@ website:
   title: "Martin Tran"
   site-url: https://Martin-Tra.github.io/
   repo-url: https://github.com/Martin-Tra/Martin-Tra.github.io
-  favicon: images/pokemon.png
+  favicon: images/Pokemon.png
   navbar:
     left:
       - href: index.qmd
